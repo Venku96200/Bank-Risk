@@ -1,0 +1,1 @@
+Policy 7.1: A new device combined with a new location requires immediate escalation to fraud operations.

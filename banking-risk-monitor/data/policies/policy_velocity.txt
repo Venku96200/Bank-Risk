@@ -1,0 +1,1 @@
+Policy 5.3: Five or more transactions within ten minutes must be held for velocity review.

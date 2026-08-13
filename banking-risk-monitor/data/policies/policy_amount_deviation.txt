@@ -1,0 +1,1 @@
+Policy 4.2: Transactions exceeding 5x a customer's average amount require Tier 2 manual review within 24 hours.

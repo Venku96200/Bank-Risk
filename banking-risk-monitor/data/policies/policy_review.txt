@@ -1,0 +1,1 @@
+Policy 2.8: Analysts must record outcomes as reviewed, false positive, or escalated.

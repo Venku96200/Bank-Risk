@@ -1,0 +1,1 @@
+Policy 8.2: Model-detected anomalies require analyst assessment when paired with material transaction risk.
