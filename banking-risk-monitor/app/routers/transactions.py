@@ -26,7 +26,9 @@ def assess(db, payload):
     rules = assess_rules(payload.amount, customer.average_amount, ctx["new_device"], ctx["new_location"], ctx["unusual_hour"], ctx["velocity_10m"])
     ml = ml_score(vector(payload.amount, customer.average_amount, ctx, payload.timestamp, payload.account_age_days))
     final, level = calculate_final_score(rules.score, ml)
-    txn = Transaction(**payload.model_dump(), customer_id=customer.id, customer_average=customer.average_amount, rule_score=rules.score, ml_score=ml, final_score=final, risk_level=level, reasons=json.dumps(rules.reasons))
+    values = payload.model_dump()
+    values.pop("customer_id")  # API customer reference maps to the Customer row above.
+    txn = Transaction(**values, customer_id=customer.id, customer_average=customer.average_amount, rule_score=rules.score, ml_score=ml, final_score=final, risk_level=level, reasons=json.dumps(rules.reasons))
     db.add(txn); db.flush(); create_alert_if_needed(db, txn)
     if payload.device_id not in devices: customer.known_devices = "|".join(devices+[payload.device_id])
     if payload.location not in locations: customer.known_locations = "|".join(locations+[payload.location])

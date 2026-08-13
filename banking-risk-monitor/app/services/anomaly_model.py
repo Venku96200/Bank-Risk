@@ -1,8 +1,9 @@
+import os
 from pathlib import Path
 import numpy as np
 import joblib
 
-MODEL_PATH = Path(__file__).resolve().parents[2] / "ml" / "model.pkl"
+MODEL_PATH = Path(os.getenv("MODEL_PATH", Path(__file__).resolve().parents[2] / "ml" / "model.pkl"))
 
 def score(features):
     if not MODEL_PATH.exists():
