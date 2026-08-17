@@ -1,0 +1,41 @@
+# Run with:  docker compose up --build
+# Stop with: docker compose down
+# Wipe the database too: docker compose down -v
+
+services:
+
+  # --- Postgres database container ---
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: banking_risk
+    ports:
+      - "5432:5432"          # host:container — lets you connect from your machine too, e.g. with a DB viewer
+    volumes:
+      - pgdata:/var/lib/postgresql/data   # keeps your data across restarts
+    healthcheck:              # lets the app container wait until Postgres is actually ready
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # --- Your FastAPI app container ---
+  app:
+    build: .                  # build using the Dockerfile in this folder
+    ports:
+      - "8000:8000"
+    environment:
+      # "db" here is the service name above — Docker lets containers reach
+      # each other by service name instead of localhost or an IP.
+      DATABASE_URL: postgresql+psycopg2://postgres:postgres@db:5432/banking_risk
+      MODEL_PATH: ml/model.pkl
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./ml:/app/ml          # so a locally retrained model.pkl is picked up without rebuilding
+
+volumes:
+  pgdata:
